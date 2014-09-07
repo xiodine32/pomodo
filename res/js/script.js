@@ -80,11 +80,20 @@ var CANVAS = undefined;
 var resultLast = 0;
 var running = false;
 var lastTicks = 0;
+var lastCount = 0;
 
 function updateAnimation() {
-	if (lastTicks == ticks.ticks)
-		requestAnimationFrame(engine);
-	lastTicks = ticks.ticks;
+	if (lastTicks == ticks.ticks) {
+		lastCount++;
+		if (lastCount > 10) {
+			requestAnimationFrame(engine);
+			lastCount = 0;
+		}
+	}
+	if (lastTicks != ticks.ticks) {
+		lastTicks = ticks.ticks;
+		lastCount = 0;
+	}
 }
 
 function engine() {
