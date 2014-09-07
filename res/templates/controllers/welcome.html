@@ -1,0 +1,61 @@
+<!-- <h1>HELLO HTML!</h1> -->
+<timer></timer>
+
+<div class="row">
+  <div class="large-12 columns">
+    <fieldset>
+      <legend>About Pomo<strong>DO</strong></legend>
+      <ul>
+        <li>
+          <p>
+            Pomo<strong>DO</strong> uses the Pomodoro<sup>&copy;</sup> technique to boost your productivity!
+          </p>
+        </li>
+        <li>
+          <p>
+            Pomo<strong>DO</strong> announces when you need to take a break or start working again by simple sounds, in a retro 8bit style.
+          </p>
+        </li>
+        <li>
+          <p>
+            Pomo<strong>DO</strong>'s easy to use interface is <i>extremely</i> simple, you can start working with just a simple click!
+          </p>  
+        </li>
+        <li>
+          <p>
+            Pomo<strong>DO</strong> automatically starts your next <span class="label success radius">break</span> or <span class="label alert radius">work</span> session! No need to manually press the start button!
+          </p>  
+        </li>
+        <li>
+          <p>
+            Need to take an interruption from your Pomo<strong>DO</strong>? Just click on the timer!
+          </p>
+        </li>
+        <li>
+          <p>
+            Should you want to end your current Pomo<strong>DO</strong>, use the end button! It's as simple as it gets!
+          </p>
+        </li>
+      </ul>
+    </fieldset>
+  </div>
+</div>
+<fieldset>
+	<legend>History</legend>
+	<table>
+		<thead>
+			<tr>
+				<td>#</td>
+				<td>Status</td>
+				<td>Type</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="m in [] | counter:timerData.doneCount:timerData.started">
+				<td>{{timerData.doneCount-(timerData.started?0:1)-$index+1}}</td>
+				<td>{{ ($index==0 && timerData.started) ? (!timerData.paused?"Running":"Paused") : "Done"}}</td>
+				<td>{{((timerData.doneCount+(timerData.started?0:1)-$index)%2==0)?"Work":"Break"}}</td>
+			</tr>
+		</tbody>
+	</table>
+</fieldset>

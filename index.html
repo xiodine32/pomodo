@@ -1,0 +1,47 @@
+<!doctype html>
+<html class="no-js" lang="en" ng-app="pomodo">
+  <head>
+    <!-- Pattern -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="vendor/css/foundation.css" />
+    <script src="vendor/js/modernizr.js"></script>
+    <script src="vendor/js/angular.min.js"></script>
+    <script src="vendor/js/angular-route.min.js"></script>
+    <script src="vendor/js/angular-animate.min.js"></script>
+
+    <!-- Modifiable -->
+    <title>PomoDO</title>
+    <link rel="stylesheet" href="res/css/style.css" />
+    <script src="res/js/models.js"></script>
+    <script src="res/js/controllers.js"></script>
+    <script src="res/js/directives.js"></script>
+    <script src="res/js/services.js"></script>
+    <script src="res/js/filters.js"></script>
+    <script src="res/js/app.js"></script>
+    <script src="res/js/script.js"></script>
+
+  </head>
+  <body>
+    
+    <div class="row">
+      <div class="large-12 columns text-center">
+        <a href="index.html" target="_parent"><h1>Pomo<strong>DO</strong></h1></a>
+        <hr>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="large-12 columns" ng-view>
+      </div>
+    </div>
+
+    
+    <!-- Pattern -->
+    <script src="vendor/js/jquery.js"></script>
+    <script src="vendor/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+  </body>
+</html>
