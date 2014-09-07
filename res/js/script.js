@@ -37,24 +37,24 @@ function Particle(spawnX, spawnY, deltaX, deltaY) {
 		if (this.y > h - 5) this.y = h - 5;
 	}
 
-	this.draw = function (c, green) { //canvas
+	this.draw = function (CanvasContext, green) { //canvas
 		//interpolation
 		this.nowX = this.nowX + RASTERIZE*2 * (-this.nowX + this.x);
 		this.nowY = this.nowY + RASTERIZE*2 * (-this.nowY + this.y);
 		// console.log(this.x, this.y);
 		if (green)
-			c.fillStyle = "#5da423";
+			CanvasContext.fillStyle = "#5da423";
 		else
-			c.fillStyle = "#c60f13";
+			CanvasContext.fillStyle = "#c60f13";
 
-		c.strokeStyle = "#222222";
-		c.beginPath();
-		c.arc(this.nowX,this.nowY, 5, 0, Math.PI*2);
-		c.fill();
+		CanvasContext.strokeStyle = "#222222";
+		CanvasContext.beginPath();
+		CanvasContext.arc(this.nowX,this.nowY, 5, 0, Math.PI*2);
+		CanvasContext.fill();
 	}
 }
 var particleContainer = [];
-function particles(c, w, h, green) {
+function particles(CanvasContext, w, h, green) {
 	if (this.lastDate == undefined)
 		this.lastDate = (new Date).getTime();
 	if (random(1, 5) == 1 && runShawty) {
@@ -71,81 +71,98 @@ function particles(c, w, h, green) {
 	}
 	// console.log(this.particleContainer);
 	for (i = 0; i < particleContainer.length; i++) {
-		particleContainer[i].draw(c, green);
+		particleContainer[i].draw(CanvasContext, green);
 	}
 }
 
+var CanvasContext = undefined;
+var CANVAS = undefined;
+var resultLast = 0;
+var running = false;
+var lastTicks = 0;
 
-function shawty() {
-		if (runShawty == false) {
-			return;
-		}
-	// console.log(this.test);
-	var i = document.getElementById('timer');
+function updateAnimation() {
+	if (lastTicks == ticks.ticks)
+		requestAnimationFrame(engine);
+	lastTicks = ticks.ticks;
+}
 
-	if (i != undefined) {
+function engine() {
+	ticks.ticks++;
+	animationTick();
+	requestAnimationFrame(engine);
+}
 
-		var total, now, type;
-		var data = JSON.parse(i.innerHTML);
-		total = data[0];
-		now = data[1];
-		type = data[2]%2;
-		if (total == 0) total = 1;
-		if (now == 0) now = 1;
+function animationTick() {
+	if (runShawty) {
+		// console.log(this.test);
+		if (CANVAS == undefined)
+			CANVAS = document.getElementById('timer');
+		if (CANVAS != undefined) { 
 
+			var total, now, type;
 
-		// console.log(total, now);
+			total = timerData.endTime - timerData.startTime;
+			now = timerData.endTime - timerData.nowTime;
+			type = (timerData.doneCount-(timerData.done?1:0))%2;
 
-		// resize
-		i.width = i.offsetWidth;
-		i.height = i.offsetHeight;
-		// width, height, context
-		var w = i.width, h = i.height;
-		var c = i.getContext('2d');
-
-
-		// drawing
-		c.fillStyle="white";
-		c.fillRect(0,0, w, h);		
-		
-		// c.beginPath();
-		// c.arc(w/2, h/2, h/2, 0, 2 * Math.PI, false);
-		// c.fillStyle = "green";
-		// c.fill();
-		// c.endPath();
-		if (this.last == undefined) this.last = 0;
-		var result = this.last + RASTERIZE * (-this.last + w * (1 - now/total));
+			if (total == 0) total = 1;
+			if (now == 0) now = 1;
 
 
-		//particles
-		particles(c, w, h, type==1);
-		
+			// console.log(total, now);
 
-		if (type == 1) {
-			c.fillStyle="#5da423";
-			c.strokeStyle="#5da423";
+			// resize
+			CANVAS.width = CANVAS.offsetWidth;
+			CANVAS.height = CANVAS.offsetHeight;
+			// width, height, context
+			var w = CANVAS.width, h = CANVAS.height;
+			if (w < 10) w = 10;
+			if (h < 10) h = 10;
+			if (CanvasContext == undefined)
+				CanvasContext = CANVAS.getContext('2d');
+
+
+			// drawing
+			CanvasContext.fillStyle="white";
+			CanvasContext.fillRect(0,0, w, h);		
+			
+			// c.beginPath();
+			// c.arc(w/2, h/2, h/2, 0, 2 * Math.PI, false);
+			// c.fillStyle = "green";
+			// c.fill();
+			// c.endPath();
+			var result = resultLast + RASTERIZE * (-resultLast + w * (1 - now/total));
+
+
+			//particles
+			particles(CanvasContext, w, h, type==1);
+			
+
+			if (type == 1) {
+				CanvasContext.fillStyle="#5da423";
+				CanvasContext.strokeStyle="#5da423";
+			} else {
+				CanvasContext.fillStyle="#c60f13";
+				CanvasContext.strokeStyle="#c60f13";
+			}
+			CanvasContext.fillRect(0,0, result, h);
+
+			CanvasContext.font = "bold 20px sans-serif";
+			CanvasContext.fillStyle="black";
+			CanvasContext.textAlign = "center";
+			var d = new Date(total - (result/w)*total);
+			var m = d.getMinutes().toString();
+			if (m.length == 1) m = "0" + m.toString();
+			var s = d.getSeconds().toString();
+			if (s.length == 1) s = "0" + s.toString();
+
+			CanvasContext.fillText(m+"m "+s+"s", w/2,h/1.5);
+
+			resultLast = result;
 		} else {
-			c.fillStyle="#c60f13";
-			c.strokeStyle="#c60f13";
+
 		}
-		c.fillRect(0,0, result, h);
-
-		c.font = "bold 20px sans-serif";
-		c.fillStyle="black";
-		c.textAlign = "center";
-		var d = new Date(total - (result/w)*total);
-		var m = d.getMinutes().toString();
-		if (m.length == 1) m = "0" + m.toString();
-		var s = d.getSeconds().toString();
-		if (s.length == 1) s = "0" + s.toString();
-
-		c.fillText(m+"m "+s+"s", w/2,h/1.5);
-
-		this.last = result;
-	} else {
-
 	}
-
-	requestAnimationFrame(shawty);
 }
-requestAnimationFrame(shawty);
+engine();
